@@ -7,6 +7,7 @@ from matplotlib.patches import Rectangle
 from pathlib import Path
 
 ASSETS_DIR = Path("./assets")
+STONE_WIDTH = 100
 
 
 class CountdownTimer:
@@ -24,14 +25,21 @@ class CountdownTimer:
         self.countdown_text = pn.pane.HTML(
             self.timer_text(self.remaining_s), 
             sizing_mode="stretch_width",
+            margin=(-325, 0, -50, 0),
         )
+        self.zero_message_html = pn.pane.HTML(
+            f"<p style='text-align: center; color: white; font-size: 125px'>" \
+            f"{self.zero_message}</p>" ,
+            margin=(-200, 0, 0, 0),
+        )
+        self.zero_message_html.visible = False
 
         self.end_progress = [-self.progress_update_percentage] * self.total_ends  
         self.end_progress_figs = [None] * self.total_ends
         self.progress = pn.Row(margin=0)
 
         self.rock_grid = pn.GridBox(
-            *[pn.pane.PNG(ASSETS_DIR / "stone.png", width=40) for _ in range(self.num_stones)],
+            *[pn.pane.PNG(ASSETS_DIR / "stone.png", width=STONE_WIDTH) for _ in range(self.num_stones)],
             ncols=int(self.num_stones / 2),
         )
         # Remap row-based indices to columns
@@ -50,6 +58,7 @@ class CountdownTimer:
         self.content = pn.Column(
             pn.layout.VSpacer(),
             self.countdown_text,
+            self.zero_message_html,
             self.progress,
             self.rock_pacing,
             pn.layout.VSpacer(),
@@ -87,7 +96,7 @@ class CountdownTimer:
             text = f"{e+1}"
 
             # Create a figure and axis
-            fig, ax = plt.subplots(figsize=(0.5, 0.5))
+            fig, ax = plt.subplots(figsize=(1, 1))
 
             # Create an image with two background colors to fill with background colors
             image = np.zeros((100, 100, 3))
@@ -104,7 +113,7 @@ class CountdownTimer:
             plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
             # Add text centered on the image
-            ax.text(0.5, 0.5, f'{text}', color='black', fontsize=20, ha='center', va='center', transform=ax.transAxes)
+            ax.text(0.5, 0.5, f'{text}', color='black', fontsize=50, ha='center', va='center', transform=ax.transAxes)
 
             ax.axis('off')
 
@@ -130,20 +139,19 @@ class CountdownTimer:
         color = "black"
         prefix = ""
         message_html = ""
+        font_size = 500
         if t_s <= 0:
             secs *= -1
             prefix = "+"
             color = "white"
-            message_html = f"<h2 style='text-align: center; color: {color}; font-size: 95px'>" \
-                f"{self.zero_message}</h2>"
+            font_size = 400
 
         # Convert to hours:mins:seconds
         mins, secs = divmod(secs, 60) 
         hours, mins = divmod(mins, 60)
 
-        html = f"<h1 style='text-align: center; color: {color}; font-size: 200px'>" \
-            f"{prefix}{hours:01d}:{mins:02d}:{secs:02d}</h1>" \
-            f"{message_html}"
+        html = f"<h1 style='text-align: center; color: {color}; font-size: {font_size}px'>" \
+            f"{prefix}{hours:01d}:{mins:02d}:{secs:02d}</h1>"
 
         return html
 
@@ -151,19 +159,19 @@ class CountdownTimer:
         """Determine which rocks should have been thrown at this point"""
         if self.curr_stone_idx == 0:
             self.rock_grid.objects = [
-                pn.pane.PNG(ASSETS_DIR / "stone.png", width=40) for _ in range(self.num_stones)
+                pn.pane.PNG(ASSETS_DIR / "stone.png", width=STONE_WIDTH) for _ in range(self.num_stones)
             ]
         elif init:  # Refresh all images
             imgs = [
-                pn.pane.PNG(ASSETS_DIR / "stone.png", width=40)
+                pn.pane.PNG(ASSETS_DIR / "stone.png", width=STONE_WIDTH)
                 for _ in range(self.num_stones)
             ]
             for i in range(self.curr_stone_idx):
-                imgs[self.rock_idx_mapping[i]] = pn.pane.PNG(ASSETS_DIR / "thrown_stone.png", width=40)
+                imgs[self.rock_idx_mapping[i]] = pn.pane.PNG(ASSETS_DIR / "thrown_stone.png", width=STONE_WIDTH)
             self.rock_grid.objects = imgs
         else:
             self.rock_grid[self.rock_idx_mapping[self.curr_stone_idx-1]] = pn.pane.PNG(
-                ASSETS_DIR / "thrown_stone.png", width=40
+                ASSETS_DIR / "thrown_stone.png", width=STONE_WIDTH
             )
 
         
@@ -193,6 +201,7 @@ class CountdownTimer:
         # Progress bar
         if self.remaining_s <= 0:
             self.progress.visible = False
+            self.zero_message_html.visible = True
         else:
             self.update_progress_bar()
 

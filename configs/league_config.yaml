@@ -1,0 +1,8 @@
+countdown_min: 90
+elapsed_min: 7
+zero_message: TIME'S UP
+progress_update_percentage: 5
+
+num_stones: 16
+total_ends: 6
+min_per_end: 15

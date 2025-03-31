@@ -1,7 +1,6 @@
 countdown_min: 105
 elapsed_min: 0
-zero_message: FINISH THIS END
-progress_update_percentage: 5
+zero_message: "FINISH THIS END. DO NOT START ANOTHER."
 
 num_stones: 16
 total_ends: 8
