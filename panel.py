@@ -7,7 +7,8 @@ from matplotlib.patches import Rectangle
 from pathlib import Path
 
 ASSETS_DIR = Path("./assets")
-STONE_WIDTH = 100
+STONE_WIDTH = 125
+PROGRESS_WIDTH = 185
 
 
 class CountdownTimer:
@@ -31,16 +32,16 @@ class CountdownTimer:
         self.countdown_text = pn.pane.HTML(
             self.timer_text(self.remaining_s), 
             sizing_mode="stretch_width",
-            margin=(-325, 0, -50, 0),
+            margin=(-325, 0, -150, 0),
         )
         self.zero_message_html = pn.pane.HTML(
-            f"<p style='text-align: center; color: white; font-size: 125px'>" \
+            f"<p style='text-align: center; color: white; font-size: 8vw'>" \
             f"{self.zero_message}</p>",
             margin=(-200, 0, 0, 0),
         )
         self.zero_message_html.visible = False
         self.max_message_html = pn.pane.HTML(
-            f"<p style='text-align: center; color: white; font-size: 125px'>" \
+            f"<p style='text-align: center; color: white; font-size: 8vw'>" \
             f"{self.max_message}</p>",
         )
         self.max_message_html.visible = False
@@ -133,7 +134,7 @@ class CountdownTimer:
             rect = Rectangle((0, 0), 1, 1, linewidth=1, edgecolor='black', facecolor='none', transform=ax.transAxes)
             ax.add_patch(rect)
 
-            matplotlib_pane = pn.pane.Matplotlib(fig, margin=0)
+            matplotlib_pane = pn.pane.Matplotlib(fig, margin=0, width=PROGRESS_WIDTH)
             self.end_progress_figs[e] = matplotlib_pane
             plt.close()
 
@@ -162,7 +163,7 @@ class CountdownTimer:
         mins, secs = divmod(secs, 60) 
         hours, mins = divmod(mins, 60)
 
-        html = f"<h1 style='text-align: center; color: {color}; font-size: {font_size}px'>" \
+        html = f"<h1 style='text-align: center; color: {color}; font-size: 23vw'>" \
             f"{prefix}{hours:01d}:{mins:02d}:{secs:02d}</h1>"
 
         return html
