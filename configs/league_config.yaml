@@ -1,8 +1,7 @@
-countdown_min: 90
-elapsed_min: 7
-zero_message: TIME'S UP
-progress_update_percentage: 5
+# CHANGE THIS ONE IF TIMER STARTED LATE, SAVE, THEN REFRESH
+elapsed_min: 0
 
-num_stones: 16
-total_ends: 6
-min_per_end: 15
+
+countdown_min: 90
+max_min: 90
+max_message: "TIME IS UP."

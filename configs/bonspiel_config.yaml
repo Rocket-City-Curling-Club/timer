@@ -1,7 +1,7 @@
-countdown_min: 105
+# CHANGE THIS ONE IF TIMER STARTED LATE, SAVE, THEN REFRESH
 elapsed_min: 0
-zero_message: "FINISH THIS END. DO NOT START ANOTHER."
 
-num_stones: 16
-total_ends: 8
-min_per_end: 15
+countdown_min: 105
+zero_message: "FINISH THIS END. DO NOT START ANOTHER."
+max_min: 120
+max_message: "STOP NOW. ENDS IN PROGRESS DO NOT COUNT."

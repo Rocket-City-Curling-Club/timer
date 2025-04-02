@@ -18,6 +18,12 @@ class CountdownTimer:
         self.duration_s = int(config.get("countdown_min", 105) * 60)
         self.remaining_s = self.duration_s - int(config.get("elapsed_min", 0) * 60)
         self.zero_message = config.get("zero_message", "FINISH THIS END")
+        max_min = config.get("max_min", None)
+        if max_min is not None:
+            self.max_s = int(max_min) * 60
+        else:
+            self.max_s = None
+        self.max_message = config.get("max_message", "TIME'S UP")
         self.progress_update_percentage = config.get("progress_update_percentage", 5)
         self.s_per_stone = self.s_per_end / self.num_stones
         self.curr_stone_idx = 0
@@ -29,10 +35,15 @@ class CountdownTimer:
         )
         self.zero_message_html = pn.pane.HTML(
             f"<p style='text-align: center; color: white; font-size: 125px'>" \
-            f"{self.zero_message}</p>" ,
+            f"{self.zero_message}</p>",
             margin=(-200, 0, 0, 0),
         )
         self.zero_message_html.visible = False
+        self.max_message_html = pn.pane.HTML(
+            f"<p style='text-align: center; color: white; font-size: 125px'>" \
+            f"{self.max_message}</p>",
+        )
+        self.max_message_html.visible = False
 
         self.end_progress = [-self.progress_update_percentage] * self.total_ends  
         self.end_progress_figs = [None] * self.total_ends
@@ -59,6 +70,7 @@ class CountdownTimer:
             pn.layout.VSpacer(),
             self.countdown_text,
             self.zero_message_html,
+            self.max_message_html,
             self.progress,
             self.rock_pacing,
             pn.layout.VSpacer(),
@@ -199,7 +211,12 @@ class CountdownTimer:
             self.update_rock_pacing()
 
         # Progress bar
-        if self.remaining_s <= 0:
+        if self.max_s is not None and elapsed_time_s >= self.max_s:
+            self.countdown_text.visible = False
+            self.zero_message_html.visible = False
+            self.progress.visible = False
+            self.max_message_html.visible = True
+        elif self.remaining_s <= 0:
             self.progress.visible = False
             self.zero_message_html.visible = True
         else:
