@@ -1,4 +1,5 @@
 import argparse
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import panel as pn
@@ -7,8 +8,10 @@ from matplotlib.patches import Rectangle
 from pathlib import Path
 
 ASSETS_DIR = Path("./assets")
-STONE_WIDTH = 125
-PROGRESS_WIDTH = 185
+STONE_WIDTH = 150
+PROGRESS_WIDTH = 175
+
+matplotlib.use('agg')
 
 
 class CountdownTimer:
@@ -28,11 +31,11 @@ class CountdownTimer:
         self.progress_update_percentage = config.get("progress_update_percentage", 5)
         self.s_per_stone = self.s_per_end / self.num_stones
         self.curr_stone_idx = 0
-        
+
         self.countdown_text = pn.pane.HTML(
-            self.timer_text(self.remaining_s), 
+            self.timer_text(self.remaining_s),
             sizing_mode="stretch_width",
-            margin=(-325, 0, -150, 0),
+            margin=(-450, 0, -150, 0),
         )
         self.zero_message_html = pn.pane.HTML(
             f"<p style='text-align: center; color: white; font-size: 8vw'>" \
@@ -46,7 +49,7 @@ class CountdownTimer:
         )
         self.max_message_html.visible = False
 
-        self.end_progress = [-self.progress_update_percentage] * self.total_ends  
+        self.end_progress = [-self.progress_update_percentage] * self.total_ends
         self.end_progress_figs = [None] * self.total_ends
         self.progress = pn.Row(margin=0)
 
@@ -56,9 +59,9 @@ class CountdownTimer:
         )
         # Remap row-based indices to columns
         stones_per_team = int(self.num_stones / 2)
-        def _iteration_order():  
+        def _iteration_order():
             for i in range(stones_per_team):
-                yield i 
+                yield i
                 yield i + stones_per_team
         self.rock_idx_mapping = {idx: mapped_idx for idx, mapped_idx in enumerate(_iteration_order())}
         self.rock_pacing = pn.Row(
@@ -81,7 +84,7 @@ class CountdownTimer:
         self.remaining_s += 1
         self.update_countdown()
         self.update_rock_pacing(init=True)
- 
+
     def update_progress_bar(self):
         """Progress bar fill"""
         segments = []
@@ -94,7 +97,7 @@ class CountdownTimer:
             # Calculate how much the current section should be filled
             fill_percentage = int(min(100, max(0, (elapsed_time_s - e * self.s_per_end) / self.s_per_end * 100)))
             if (
-                fill_percentage >= (self.end_progress[e] + self.progress_update_percentage) or 
+                fill_percentage >= (self.end_progress[e] + self.progress_update_percentage) or
                 (fill_percentage == 100 and self.end_progress[e] != 100)
             ):
                 self.end_progress[e] = fill_percentage
@@ -105,7 +108,7 @@ class CountdownTimer:
             fill_percentage = int(min(100, max(0, (elapsed_time_s - e * self.s_per_end) / self.s_per_end * 100)))
             if fill_percentage != self.end_progress[e]:
                 self.end_progress[e] = fill_percentage
-            
+
             text = f"{e+1}"
 
             # Create a figure and axis
@@ -131,7 +134,7 @@ class CountdownTimer:
             ax.axis('off')
 
             # Add a black outline using a rectangle
-            rect = Rectangle((0, 0), 1, 1, linewidth=1, edgecolor='black', facecolor='none', transform=ax.transAxes)
+            rect = Rectangle((0, 0), 1, 1, linewidth=4, edgecolor='black', facecolor='none', transform=ax.transAxes)
             ax.add_patch(rect)
 
             matplotlib_pane = pn.pane.Matplotlib(fig, margin=0, width=PROGRESS_WIDTH)
@@ -160,7 +163,7 @@ class CountdownTimer:
             font_size = 400
 
         # Convert to hours:mins:seconds
-        mins, secs = divmod(secs, 60) 
+        mins, secs = divmod(secs, 60)
         hours, mins = divmod(mins, 60)
 
         html = f"<h1 style='text-align: center; color: {color}; font-size: 23vw'>" \
@@ -187,7 +190,7 @@ class CountdownTimer:
                 ASSETS_DIR / "thrown_stone.png", width=STONE_WIDTH
             )
 
-        
+
     def update_countdown(self):
         """Main update controller, runs every second"""
         self.remaining_s -= 1
@@ -196,7 +199,7 @@ class CountdownTimer:
         if self.remaining_s <= 0:
             self.content.styles = {'background-color': '#FF0000'}  # Change background color to red
         elif self.remaining_s < 900:  # change to yellow with 15 mins (900s) left
-            self.content.styles = {'background-color': '#FFFF00'}  
+            self.content.styles = {'background-color': '#FFFF00'}
         else:
             self.content.styles = {'background-color': "#99FF99"}
 
@@ -236,7 +239,7 @@ def main():
         help="Path to yaml config file"
     )
     args = parser.parse_args()
-    
+
     with open(args.config_file, "r") as config_file:
         config = yaml.safe_load(config_file)
 
