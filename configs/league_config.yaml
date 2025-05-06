@@ -1,7 +1,6 @@
 # CHANGE THIS ONE IF TIMER STARTED LATE, SAVE, THEN REFRESH
 elapsed_min: 0
 
-
 countdown_min: 90
 max_min: 90
 max_message: "TIME IS UP."

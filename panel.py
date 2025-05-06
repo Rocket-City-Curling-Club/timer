@@ -40,12 +40,13 @@ class CountdownTimer:
         self.zero_message_html = pn.pane.HTML(
             f"<p style='text-align: center; color: white; font-size: 8vw'>" \
             f"{self.zero_message}</p>",
-            margin=(-200, 0, 0, 0),
+            margin=(-200, 0, -125, 0),
         )
         self.zero_message_html.visible = False
         self.max_message_html = pn.pane.HTML(
             f"<p style='text-align: center; color: white; font-size: 8vw'>" \
             f"{self.max_message}</p>",
+            margin=(50, 0, -125, 0),
         )
         self.max_message_html.visible = False
 
@@ -69,6 +70,10 @@ class CountdownTimer:
             self.rock_grid,
             pn.layout.HSpacer(),
         )
+        self.rccc_logo = pn.Row(
+            pn.HSpacer(),
+            pn.pane.PNG(ASSETS_DIR / "rccc_logo.png", width=STONE_WIDTH, margin=(-100, 50, 0, 0)),
+        )
 
         self.content = pn.Column(
             pn.layout.VSpacer(),
@@ -77,6 +82,7 @@ class CountdownTimer:
             self.max_message_html,
             self.progress,
             self.rock_pacing,
+            self.rccc_logo,
             pn.layout.VSpacer(),
             styles={'background-color': 'green'},
         )
