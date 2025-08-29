@@ -1,0 +1,7 @@
+# CHANGE THIS ONE IF TIMER STARTED LATE, SAVE, THEN REFRESH
+elapsed_min: 0
+
+countdown_min: 105
+zero_message: "Finish this quest. Do NOT start another."
+max_min: 120
+max_message: "HALT! That which lies unfinished shall NOT be counted."
