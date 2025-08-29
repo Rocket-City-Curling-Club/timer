@@ -21,7 +21,9 @@ class CountdownTimer:
         self.s_per_end = int(config.get("min_per_end", 15) * 60)
         self.duration_s = int(config.get("countdown_min", 105) * 60)
         self.remaining_s = self.duration_s - int(config.get("elapsed_min", 0) * 60)
+        self.elapsed_min = (self.duration_s - self.remaining_s) // 60
         self.zero_message = config.get("zero_message", "FINISH THIS END")
+        self.elapsed_out_file = config.get("elapsed_min_out_file", None)
         max_min = config.get("max_min", None)
         if max_min is not None:
             self.max_s = int(max_min) * 60
@@ -213,6 +215,13 @@ class CountdownTimer:
         elapsed_time_s = self.duration_s - self.remaining_s
         previous_stone_idx = self.curr_stone_idx
         self.curr_stone_idx = int(elapsed_time_s // self.s_per_stone % self.num_stones)
+
+        # Write out elapsed min if different and configured to do so
+        elapsed_min = elapsed_time_s // 60
+        if self.elapsed_out_file is not None and elapsed_min != self.elapsed_min:
+            self.elapsed_min = elapsed_min
+            with open(self.elapsed_out_file, "w") as f:
+                f.write(f"{elapsed_min}")
 
         # Stone pacing
         if self.remaining_s <= 0:

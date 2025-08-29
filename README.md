@@ -45,6 +45,7 @@ The following configuration options are provided:
 - `num_stones`: Total number of stones per end, default 16. Primarily modified for doubles.
 - `total_ends`: Number of ends to include in progress bar, default 8.
 - `progress_update_percentage`: Percentage difference between progress bar re-renders, default 5.
+- `elapsed_min_out_file`: If provided, a file containing elapsed minutes will be generated. Useful in case of (e.g power) failure.
 
 If a configuration option is not present in the configuration file, the default value will be used. Sample configs are provided in `./configs/`
 
