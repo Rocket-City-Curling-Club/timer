@@ -36,16 +36,18 @@ At least 4 GB of RAM is recommended.
 
 The following configuration options are provided:
 
-- `min_per_end`: Minutes per end for pacing, default 15.
 - `countdown_min`: Starting value of countdown timer in minutes, default 105.
-- `elapsed_min`: If timer is accidentally started late, adjust this value for minutes elapsed since the draw started. This allows the countdown to start later without affecting progress, default 0. This value needs to be reset back to 0 prior to beginning the next draw, so that it gets the full time!
-- `zero_message`: Message to be displayed when the timer hits zero, default "FINISH THIS END".
-- `max_min`: After hitting zero, the timer begins to count up. If this value is set, once `max_min` have elapsed (including countdown time), the timer stops counting completely and displays `max_message`. Default is `None`, timer will count up until stopped.
-- `max_message`: Message to be displayed after `max_min` have elapsed. Default "TIME'S UP"
-- `num_stones`: Total number of stones per end, default 16. Primarily modified for doubles.
-- `total_ends`: Number of ends to include in progress bar, default 8.
-- `progress_update_percentage`: Percentage difference between progress bar re-renders, default 5.
+- `elapsed_min`: If timer is accidentally started late, adjust this value for minutes elapsed since the draw started. This allows the countdown to start later without affecting progress, default 0. This value needs to be reset back to 0 prior to beginning the next draw, so that it gets the full time! 
 - `elapsed_min_out_file`: If provided, a file containing elapsed minutes will be generated. Useful in case of (e.g power) failure.
+- `max_message`: Message to be displayed after `max_min` have elapsed. Default "TIME'S UP"
+- `max_min`: After `countdown_min` have passed, timer will create final countdown for the last end, based
+on this value (`max_min - countdown_min`). Once `max_min` have elapsed (including countdown time), the timer stops counting completely and displays `max_message`. Default is `None` and, if unset, timer will count up infinitely after hitting 0.
+- `min_per_end`: Minutes per end for pacing, default 15.
+- `num_stones`: Total number of stones per end, default 16. Primarily modified for doubles.
+- `progress_update_percentage`: Percentage difference between progress bar re-renders, default 5.
+- `total_ends`: Number of ends to include in progress bar, default 8.
+- `warning_min`: Background color will change to yellow to warn players time is almost up when this much time is left, default 15.
+- `zero_message`: Message to be displayed when the timer hits zero, default "FINISH THIS END".
 
 If a configuration option is not present in the configuration file, the default value will be used. Sample configs are provided in `./configs/`
 

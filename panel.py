@@ -22,13 +22,16 @@ class CountdownTimer:
         self.duration_s = int(config.get("countdown_min", 105) * 60)
         self.remaining_s = self.duration_s - int(config.get("elapsed_min", 0) * 60)
         self.elapsed_min = (self.duration_s - self.remaining_s) // 60
+        self.warning_s = int(config.get("warning_min", 15) * 60)
         self.zero_message = config.get("zero_message", "FINISH THIS END")
         self.elapsed_out_file = config.get("elapsed_min_out_file", None)
         max_min = config.get("max_min", None)
         if max_min is not None:
             self.max_s = int(max_min) * 60
+            self.last_end_s = self.max_s - self.duration_s
         else:
             self.max_s = None
+            self.last_end_s = None
         self.max_message = config.get("max_message", "TIME'S UP")
         self.progress_update_percentage = config.get("progress_update_percentage", 5)
         self.s_per_stone = self.s_per_end / self.num_stones
@@ -157,24 +160,29 @@ class CountdownTimer:
 
     def timer_text(self, t_s):
         """Timer display text"""
-        secs = t_s
-
-        # Start counting up after 0
+        message_html = ""
+        font_size_vw = 23
         color = "black"
         prefix = ""
-        message_html = ""
-        font_size = 500
-        if t_s <= 0:
+
+        # Once time expires, we have two cases
+        secs = t_s
+        if secs <= 0:
             secs *= -1
-            prefix = "+"
             color = "white"
-            font_size = 400
+            
+            # Countdown for the last end if max_min provided in config
+            if self.last_end_s is not None:
+                secs = self.last_end_s - secs
+            else:  # Otherwise, start counting up
+                prefix = "+"
+                font_size_vw = 22
 
         # Convert to hours:mins:seconds
         mins, secs = divmod(secs, 60)
         hours, mins = divmod(mins, 60)
 
-        html = f"<h1 style='text-align: center; color: {color}; font-size: 23vw'>" \
+        html = f"<h1 style='text-align: center; color: {color}; font-size: {font_size_vw}vw'>" \
             f"{prefix}{hours:01d}:{mins:02d}:{secs:02d}</h1>"
 
         return html
@@ -206,7 +214,7 @@ class CountdownTimer:
         self.countdown_text.object = self.timer_text(self.remaining_s)
         if self.remaining_s <= 0:
             self.content.styles = {'background-color': '#FF0000'}  # Change background color to red
-        elif self.remaining_s < 900:  # change to yellow with 15 mins (900s) left
+        elif self.remaining_s < self.warning_s:  # change to yellow with warning_s left
             self.content.styles = {'background-color': '#FFFF00'}
         else:
             self.content.styles = {'background-color': "#99FF99"}
